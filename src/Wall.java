@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -22,6 +23,22 @@ public class Wall implements Structure{
 
     @Override
     public int count() {
-        return blocks.size();
+        List<Block> nonCompositeBlocks = blocks;
+
+        while (nonCompositeBlocks.stream().anyMatch(block -> block instanceof CompositeBlock)){
+            List<Block> nextLevelOfNonCompositeBlocks = new ArrayList<>();
+
+            for (Block block : nonCompositeBlocks){
+                if (block instanceof CompositeBlock){
+                    nextLevelOfNonCompositeBlocks.addAll(((CompositeBlock) block).getBlocks());
+                } else {
+                    nextLevelOfNonCompositeBlocks.add(block);
+                }
+            }
+
+            nonCompositeBlocks = nextLevelOfNonCompositeBlocks;
+        }
+
+        return nonCompositeBlocks.size();
     }
 }
